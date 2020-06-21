@@ -14,7 +14,8 @@ function initScene () {
 	document.body.appendChild(renderer.domElement);
 
 	control = new THREE.OrbitControls(camera, renderer.domElement);
-
+	control.enablePan = false
+	
 	camera.position.set(0, 10, 10);
 
 	lights[0] = new THREE.AmbientLight(0x111111);
