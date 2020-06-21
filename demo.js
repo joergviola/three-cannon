@@ -1,10 +1,9 @@
 var world, timestep = 1/60;
-var scene, camera, renderer, control, raycaster, mouse, lights=[];
+var scene, camera1, renderer1, control, raycaster, mouse, lights=[], ball, player1, player2;
 var objAry = [];
 
 initWorld();
 initScene();
-render();
 
 var material = new THREE.MeshPhongMaterial({
 	color: 0x156289,
@@ -18,7 +17,11 @@ var floor = new Floor({
 });
 
 var boxMaterial = new THREE.MeshPhongMaterial({
-	color: 0xff5252
+	color: 0xff5252,
+});
+
+var groundMaterial = new THREE.MeshPhongMaterial({
+	color: 0x33FF88,
 });
 
 let boxHeight = 10
@@ -61,11 +64,10 @@ var bottom = new Box({
 	mass: 0,
 	size: {x:boxWidth+2, y:2, z:boxLength+2},
 	position: {x:0, y:1, z:0},
-	material: boxMaterial
+	material: groundMaterial
 });
 
 lights[1].position.set(0, 200, 0);
-camera.position.set(5, 50, 10);
 
 var balls = new THREE.Object3D();
 var cubes = new THREE.Object3D();
@@ -73,14 +75,15 @@ scene.add(balls, cubes, box);
 
 let ballRadius = 0.5
 
-var ball = new Sphere({
+ball = new Sphere({
 	parent:balls,
 	mass:1,
 	radius:ballRadius,
-	position:{x:0, y:2 + ballRadius/2, z:0},
+	position:{x:0, y:10, z:0},
 	material:material
 });
-var player1 = new Sphere({
+
+player1 = new Sphere({
 	parent:balls,
 	mass:100,
 	radius:1,
@@ -89,7 +92,7 @@ var player1 = new Sphere({
 });
 player1.body.linearDamping = 0.95
 
-var player2 = new Sphere({
+player2 = new Sphere({
 	parent:balls,
 	mass:100,
 	radius:1,
@@ -110,6 +113,19 @@ window.addEventListener('keydown', function (e) {
 	if(e.key=="ArrowRight") {
 		player1.body.velocity.x = -30
 	}
+
+	if(e.key=="w") {
+		player2.body.velocity.z = -30
+	}
+	if(e.key=="s") {
+		player2.body.velocity.z = 30
+	}
+	if(e.key=="a") {
+		player2.body.velocity.x = -30
+	}
+	if(e.key=="d") {
+		player2.body.velocity.x = 30
+	}
 })
 
 window.addEventListener('keyup', function (e) {
@@ -125,5 +141,47 @@ window.addEventListener('keyup', function (e) {
 	if(e.key=="ArrowRight") {
 		player1.body.velocity.x = 0
 	}
+
+	if(e.key=="w") {
+		player2.body.velocity.z = 0
+	}
+	if(e.key=="s") {
+		player2.body.velocity.z = 0
+	}
+	if(e.key=="a") {
+		player2.body.velocity.x = 0
+	}
+	if(e.key=="d") {
+		player2.body.velocity.x = 0
+	}
 })
+
+function render () {
+	requestAnimationFrame(render);
+
+	world.step(timestep);
+
+	for (var i = objAry.length - 1; i >= 0; i--) {
+		objAry[i].update();
+	}
+
+	control.update();
+
+	let behind = 20
+	let above = 15
+
+	let cam1 = player1.mesh.position.clone().sub(ball.mesh.position).setLength(behind).add(player1.mesh.position);
+	let cam2 = player2.mesh.position.clone().sub(ball.mesh.position).setLength(behind).add(player2.mesh.position);
+	camera1.position.set(cam1.x, above, cam1.z);
+	camera2.position.set(cam2.x, above, cam2.z);
+
+	camera1.lookAt(player1.mesh.position)
+	camera2.lookAt(player2.mesh.position)
+
+	renderer1.render(scene, camera1);
+	renderer2.render(scene, camera2);
+}
+
+render();
+
 

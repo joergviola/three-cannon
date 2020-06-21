@@ -1,22 +1,38 @@
+
 function initWorld () {
 	world = new CANNON.World();
 	world.gravity.set(0, -10, 0);
 }
 
+
 function initScene () {
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-	renderer = new THREE.WebGLRenderer({
+	camera1 = new THREE.PerspectiveCamera(75, window.innerWidth/2/window.innerHeight, 0.1, 1000);
+	renderer1 = new THREE.WebGLRenderer({
 		// alpha:true,
 		antialias:true
 	});
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.body.appendChild(renderer.domElement);
+	renderer1.setSize(window.innerWidth/2, window.innerHeight);
+	document.body.appendChild(renderer1.domElement);
+	camera1.position.set(0, 10, 10);
+	renderer1.shadowMap.enabled = true;
+	renderer1.shadowMapSoft = true;
 
-	control = new THREE.OrbitControls(camera, renderer.domElement);
+	camera2 = new THREE.PerspectiveCamera(75, window.innerWidth/2/window.innerHeight, 0.1, 1000);
+	renderer2 = new THREE.WebGLRenderer({
+		// alpha:true,
+		antialias:true
+	});
+	renderer2.setSize(window.innerWidth/2, window.innerHeight);
+	document.body.appendChild(renderer2.domElement);
+	camera2.position.set(0, 10, 10);
+	renderer2.shadowMap.enabled = true;
+	renderer2.shadowMapSoft = true;
+
+
+	control = new THREE.OrbitControls(camera1, renderer1.domElement);
 	control.enablePan = false
-	
-	camera.position.set(0, 10, 10);
+
 
 	lights[0] = new THREE.AmbientLight(0x111111);
 	lights[1] = new THREE.SpotLight(0xffffff);
@@ -26,27 +42,10 @@ function initScene () {
 	lights[1].shadow.mapSize = new THREE.Vector2(2048, 2048);
 	scene.add(lights[0], lights[1]);
 
-	renderer.shadowMap.enabled = true;
-	renderer.shadowMapSoft = true;
-
 	scene.fog = new THREE.FogExp2(0x000000, 0.01);
 
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
-}
-
-function render () {
-	requestAnimationFrame(render);
-
-	world.step(timestep);
-
-	for (var i = objAry.length - 1; i >= 0; i--) {
-		objAry[i].update();
-	}
-
-	control.update();
-
-	renderer.render(scene, camera);
 }
 
 function Obj3d (obj, shape, geometry) {
