@@ -7,10 +7,12 @@ function initWorld () {
 
 function initScene () {
 	scene = new THREE.Scene();
-	camera1 = new THREE.PerspectiveCamera(75, window.innerWidth/2/window.innerHeight, 0.1, 1000);
+	camera1 = new THREE.PerspectiveCamera(75, window.innerWidth/2/window.innerHeight, 10, 1000);
 	renderer1 = new THREE.WebGLRenderer({
 		// alpha:true,
-		antialias:true
+		antialias:true,
+		gammaOutput: true,
+		gammaFactor: 2.2
 	});
 	renderer1.setSize(window.innerWidth/2, window.innerHeight);
 	document.body.appendChild(renderer1.domElement);
@@ -18,10 +20,12 @@ function initScene () {
 	renderer1.shadowMap.enabled = true;
 	renderer1.shadowMapSoft = true;
 
-	camera2 = new THREE.PerspectiveCamera(75, window.innerWidth/2/window.innerHeight, 0.1, 1000);
+	camera2 = new THREE.PerspectiveCamera(75, window.innerWidth/2/window.innerHeight, 10, 1000);
 	renderer2 = new THREE.WebGLRenderer({
 		// alpha:true,
-		antialias:true
+		antialias:true,
+		gammaOutput: true,
+		gammaFactor: 2.2
 	});
 	renderer2.setSize(window.innerWidth/2, window.innerHeight);
 	document.body.appendChild(renderer2.domElement);
@@ -34,12 +38,12 @@ function initScene () {
 	control.enablePan = false
 
 
-	lights[0] = new THREE.AmbientLight(0x111111);
-	lights[1] = new THREE.SpotLight(0xffffff);
+	lights[0] = new THREE.AmbientLight(0xFFFFFF);
+	lights[1] = new THREE.SpotLight(0xFFFFFF);
 	lights[1].position.set(20, 30, 20);
 	lights[1].target.position.set(0, 0, 0);
 	lights[1].castShadow = true;
-	lights[1].shadow.mapSize = new THREE.Vector2(2048, 2048);
+	lights[1].shadow.mapSize = new THREE.Vector2(1024, 1024);
 	scene.add(lights[0], lights[1]);
 
 	scene.fog = new THREE.FogExp2(0x000000, 0.01);
